@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Lenguaje Instintivo Visual</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>Lenguaje Instintivo Visual</h1>
+
+    <textarea id="mensajeVisible" placeholder="Mensaje visible... (mensaje universal)"></textarea>
+    <textarea id="mensajeOculto" placeholder="Mensaje oculto... (alineación vertical)"></textarea>
+
+    <div class="buttons">
+      <button onclick="codificar()">Codificar</button>
+      <button onclick="resetear()">Reset</button>
+      <button onclick="generarDesdeWikipediaAlineado()">Mensaje oculto alineado (Wikipedia)</button>
+      <button id="botonCodificarMilimetrico">Codificar con precisión milimétrica</button>
+    </div>
+
+    <div id="resultado"></div>
+  </div>
+
+  <!-- Scripts necesarios -->
+  <script src="./script_base.js" type="module"></script>
+  <script src="./script_wikipedia_alineado.js" type="module"></script>
+  <script type="module">
+    import { codificar, resetear, decodificar } from './script_base.js';
+    import { codificarConPrecisionMilimetricaEnTextarea } from './motor_simbolico_milimetrico.js';
+
+    // Asignar las funciones a los botones
+    document.querySelector('button[onclick="codificar()"]').addEventListener('click', codificar);
+    document.querySelector('button[onclick="resetear()"]').addEventListener('click', resetear);
+    document.getElementById('botonCodificarMilimetrico').addEventListener('click', () => {
+      codificarConPrecisionMilimetricaEnTextarea('mensajeOculto', 'mensajeVisible');
+    });
+  </script>
+</body>
+</html>
