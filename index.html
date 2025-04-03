@@ -1,41 +1,74 @@
-<!-- Publicación forzada tras cambiar visibilidad -->
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8" />
-  <title>Lenguaje Instintivo Visual</title>
-  <link rel="stylesheet" href="style.css" />
-</head>
-<body>
-  <div class="container">
-    <h1>Lenguaje Instintivo Visual</h1>
+// motor_de_reglas.js
 
-    <textarea id="mensajeVisible" placeholder="Mensaje visible... (mensaje universal)"></textarea>
-    <textarea id="mensajeOculto" placeholder="Mensaje oculto... (alineación vertical)"></textarea>
+// Lista base de reglas
+export const reglas = [
+  {
+    nombre: "Generar relleno completo",
+    dependeDe: [],
+    condiciones: () => true, // Siempre puede ejecutarse
+    ejecutar: () => {
+      console.log("✔ Ejecutando: Generar relleno completo");
+      // Aquí se llamaría la función real de generación de relleno
+    },
+    sugerencias: []
+  },
+  {
+    nombre: "Reubicar palabras clave",
+    dependeDe: ["Generar relleno completo"],
+    condiciones: () => {
+      // Aquí puedes verificar si ya hay relleno generado, por ejemplo
+      return true; // Simulación
+    },
+    ejecutar: () => {
+      console.log("✔ Ejecutando: Reubicar palabras clave");
+      // Aquí se llamaría la función real para reubicar palabras
+    },
+    sugerencias: ["Asegúrate de generar el relleno completo antes de reubicar."]
+  },
+  {
+    nombre: "Validar relleno antes y después de palabras clave",
+    dependeDe: ["Reubicar palabras clave"],
+    condiciones: () => {
+      const rellenoCorrecto = false; // Simulación de fallo
+      return rellenoCorrecto;
+    },
+    ejecutar: () => {
+      console.log("✔ Validación exitosa: Hay relleno antes y después de cada palabra clave.");
+    },
+    sugerencias: [
+      "Verifica que cada palabra clave esté rodeada de palabras de relleno.",
+      "Tal vez necesites revisar el script de alineación para que no elimine el relleno anterior."
+    ]
+  }
+];
 
-    <div class="buttons">
-      <button onclick="codificar()">Codificar</button>
-      <button onclick="resetear()">Reset</button>
-      <button onclick="generarDesdeWikipediaAlineado()">Mensaje oculto alineado (Wikipedia)</button>
-      <button id="botonCodificarMilimetrico">Codificar con precisión milimétrica</button>
-    </div>
+// Función para ejecutar las reglas en orden con validación de dependencias
+export function ejecutarReglas(reglas) {
+  const ejecutadas = new Set();
 
-    <div id="resultado"></div>
-  </div>
+  function ejecutarConDependencias(regla) {
+    for (const dep of regla.dependeDe) {
+      const dependencia = reglas.find(r => r.nombre === dep);
+      if (dependencia && !ejecutadas.has(dep)) {
+        ejecutarConDependencias(dependencia);
+      }
+    }
 
-  <!-- Scripts necesarios -->
-  <script src="./script_base.js" type="module"></script>
-  <script src="./script_wikipedia_alineado.js" type="module"></script>
-  <script type="module">
-    import { codificar, resetear, decodificar } from './script_base.js';
-    import { codificarConPrecisionMilimetricaEnTextarea } from './motor_simbolico_milimetrico.js';
+    if (!ejecutadas.has(regla.nombre)) {
+      if (regla.condiciones()) {
+        regla.ejecutar();
+        ejecutadas.add(regla.nombre);
+      } else {
+        console.warn(`❌ No se ejecutó: ${regla.nombre}`);
+        if (regla.sugerencias?.length) {
+          console.info("💡 Sugerencias:");
+          regla.sugerencias.forEach(s => console.info(`- ${s}`));
+        }
+      }
+    }
+  }
 
-    // Asignar las funciones a los botones
-    document.querySelector('button[onclick="codificar()"]').addEventListener('click', codificar);
-    document.querySelector('button[onclick="resetear()"]').addEventListener('click', resetear);
-    document.getElementById('botonCodificarMilimetrico').addEventListener('click', () => {
-      codificarConPrecisionMilimetricaEnTextarea('mensajeOculto', 'mensajeVisible');
-    });
-  </script>
-</body>
-</html>
+  console.group("🔎 Verificando reglas del sistema");
+  reglas.forEach(regla => ejecutarConDependencias(regla));
+  console.groupEnd();
+}
