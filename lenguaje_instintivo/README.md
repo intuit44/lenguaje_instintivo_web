@@ -24,6 +24,8 @@ Este proyecto explora un sistema de codificación visual basado en alineación s
 - `index.html`: interfaz visual.
 - `style.css`: estilo del visor.
 
+_Última actualización: Abril 2025_
+
 ---
 
 Desarrollado por **Winston Esparza**  
